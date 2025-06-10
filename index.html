@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel de Viagens dos Sonhos</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-geosearch@3.11.0/dist/geosearch.umd.js"></script>
+
+    <link rel="stylesheet" href="css/styleIndex.css" />
+  </head>
+<body>
+  <header>
+    <h1>Minha Viagem dos Sonhos</h1>
+  </header>
+
+  <!-- O content-wrapper deve ser o container principal para a sidebar e o conteúdo -->
+  <div class="content-wrapper">
+    
+    <!-- O ASIDE (sidebar) vai aqui DENTRO -->
+    <aside>
+      <!-- Checklist de Bagagem -->
+      <div class="checklist-container">
+    <div class="header-widgets">
+        <h2><i class="fas fa-book-open"></i>Checklist de Bagagem</h2>
+        <p>Monte a sua lista de itens para colocar em sua bagagem!</p>
+    </div>
+        <div class="input-group">
+          <input
+            type="text"
+            id="checklistItemInput"
+            placeholder="Ex: Passaporte, carregador..."
+          />
+        </div>
+        <button id="addChecklistItemBtn">Adicionar Item</button>
+        <button id="clearChecklistBtn">Limpar Checklist</button>
+
+        <ul id="checklistUL">
+          <!-- Os itens da lista serão adicionados aqui pelo JavaScript -->
+            </ul>
+        </div>
+        </aside>
+
+        <!-- O MAIN (conteúdo principal) vem logo depois, ainda DENTRO do wrapper -->
+        <main>
+        <!-- MAPA -->
+      <div class="widgetsMap">
+    <div class="header-widgets">
+        <h2><i class="fas fa-book-open"></i>Relógio com fusos horários</h2>
+        <p>Pesquise aqui o fuso horário do seu destino</p>
+    </div>
+        <div style="display: flex; align-items: center; width: 100%; margin: 10px; justify-content: center;">
+          <input
+            type="text"
+            name="findLocate"
+            placeholder="Digite seu destino"
+            id="searchInput"
+          />
+          <img src="img/seta.png" id="searchButton" width="30px" alt="Buscar" style="cursor: pointer;"/>
+        </div>
+        <div id="map"></div>
+      </div>
+      <div class="widgets">
+            <div class="header-widgets">
+        <h2><i class="fas fa-book-open"></i>Que horas são?</h2>
+        <p>Relógio para você verificar a hora</p>
+    </div>        
+      </div>
+      <!-- LISTA DE DESTINOS -->
+      <div class="widgets">
+        <div class="container">
+    <div class="header-widgets">
+        <h2><i class="fas fa-book-open"></i>Lista de Destinos</h2>
+        <p>Monte a sua lista do lugares que você deseja visitar!</p>
+    </div>
+
+          <input
+            type="text"
+            id="novaTarefa"
+            placeholder="Digite um novo destino"
+          /><br /><br />
+          <button id="adicionarTarefa">Adicionar Novo Destino!</button>
+
+          <ul id="listaTarefas"></ul>
+
+          <button id="limparLista">Limpar Lista</button>
+        </div>
+      </div>
+
+      <!--CONVERSOR DE MOEDAS-->
+      <!-- Adicionei a classe .widgets aqui para herdar o estilo base -->
+      <div class="conversor-container widgets">
+        <div class="header-widgets">
+          <h2>Conversor de Moedas</h2>
+          <p>Converta valores em tempo real</p>
+        </div>
+        <div class="conversor-body">
+            <!-- Conteúdo do conversor -->
+        </div>
+      </div>
+    </main>
+
+  </div> <!-- Fim do .content-wrapper -->
+
+   <!-- DIÁRIO DE VIAGEM -->
+
+   <div class="diario-container">
+    <div class="header-widgets">
+        <h2><i class="fas fa-book-open"></i> Meu Diário de Viagem</h2>
+        <p>Registre suas aventuras e memórias especiais</p>
+    </div>
+    <div class="diario-body">
+        <form id="form-entrada">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="local"><i class="fas fa-map-marker-alt"></i> Local</label>
+                    <input type="text" id="local" placeholder="Onde você está?" required>
+                </div>
+                <div class="form-group">
+                    <label for="data"><i class="far fa-calendar-alt"></i> Data</label>
+                    <input type="date" id="data" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="titulo"><i class="fas fa-heading"></i> Título</label>
+                <input type="text" id="titulo" placeholder="Dê um título para esta entrada" required>
+            </div>
+            <div class="form-group">
+                <label for="texto"><i class="fas fa-pen"></i> Registro</label>
+                <textarea id="texto" placeholder="Descreva sua experiência hoje..." required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="humor"><i class="far fa-smile"></i> Humor</label>
+                <select id="humor">
+                    <option value="feliz">😊 Feliz</option>
+                    <option value="animado">😃 Animado</option>
+                    <option value="neutro">😐 Neutro</option>
+                    <option value="cansado">😴 Cansado</option>
+                    <option value="estressado">😤 Estressado</option>
+                </select>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="reset" class="btn"><i class="fas fa-eraser"></i> Limpar</button>
+                <button type="submit" class="btn btn-salvar"><i class="fas fa-save"></i> Salvar Entrada</button>
+            </div>
+        </form>
+
+        <div class="entradas-container">
+            <div class="entradas-header">
+                <h3><i class="fas fa-history"></i> Entradas Anteriores</h3>
+                <div class="form-group" style="width: 150px;">
+                    <select id="filtro">
+                        <option value="todos">Todos</option>
+                        <option value="hoje">Hoje</option>
+                        <option value="semana">Esta semana</option>
+                        <option value="mes">Este mês</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div id="lista-entradas">
+                <div class="nenhuma-entrada">
+                    <i class="fas fa-book" style="font-size: 2rem; margin-bottom: 10px; opacity: 0.3;"></i>
+                    <p>Nenhuma entrada ainda. Comece a escrever suas aventuras!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+  <script src="js/scriptMap.js"></script>
+  <script src="js/scriptListaDest.js"></script>
+  <script src="js/scriptCheck.js"></script>
+  <script src="js/scriptConversor.js"></script>
+  <script src="js/scriptHorario.js"></script>
+</body>
+</html>
