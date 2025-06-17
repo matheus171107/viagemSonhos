@@ -66,10 +66,23 @@ E pronto! O Painel de Viagens dos Sonhos estará funcionando localmente em sua m
 
 ---
 
-## 🧑‍💻 Autores
+## 📞 Contato
+Em caso de interesse ou dúvidas sobre algum projeto você pode me contatar nos links abaixo:
 
-Este projeto foi desenvolvido com dedicação por:
+   **Maria Clara De Araujo Patta**
+<div>
+<a href="https://www.instagram.com/clara_patta/?next=%2F" target="_blank"><img loading="lazy" src="https://img.shields.io/badge/-Instagram-%23E4405F?style=for-the-badge&logo=instagram&logoColor=white" target="_blank"></a>
+<a href = "mailto:maria.patta@aluno.senai.br"><img loading="lazy" src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white" target="_blank"></a>
+</div>
 
-*   **Matheus** - [matheus.s.pereira11@aluno.senai.br](mailto:matheus.s.pereira11@aluno.senai.br)
-*   **Maria (Patta)** - [maria.patta@aluno.senai.br](mailto:maria.patta@aluno.senai.br)
-*   **Laura** - [laura.mora@aluno.senai.br](mailto:laura.mora@aluno.senai.br)
+   **Matheus de Souza Alves Pereira**
+<div>
+<a href="https://www.instagram.com/masouzaper/" target="_blank"><img loading="lazy" src="https://img.shields.io/badge/-Instagram-%23E4405F?style=for-the-badge&logo=instagram&logoColor=white" target="_blank"></a>
+<a href = "mailto:matheus.s.pereira11@aluno.senai.br"><img loading="lazy" src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white" target="_blank"></a>
+</div>
+
+   **Laura Dellovo Mora**
+<div>
+<a href="https://www.instagram.com/lauradellovo_/" target="_blank"><img loading="lazy" src="https://img.shields.io/badge/-Instagram-%23E4405F?style=for-the-badge&logo=instagram&logoColor=white" target="_blank"></a>
+<a href = "mailto:laura.mora@aluno.senai.br"><img loading="lazy" src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white" target="_blank"></a>
+</div>
