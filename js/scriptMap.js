@@ -22,7 +22,7 @@ async function performSearch() {
       const firstResult = results[0];
       const latlng = { lat: firstResult.y, lng: firstResult.x };
       updateMarker(latlng);
-      gravarLocalSototorage(latlng.lat.toFixed(6), latlng.lng.toFixed(6));
+      shareInformations(latlng.lat.toFixed(6), latlng.lng.toFixed(6));
       console.log(`Local encontrado: `, latlng);
     } else {
       alert("Nenhum resultado encontrado para a sua busca.");
@@ -43,7 +43,7 @@ searchInput.addEventListener("keypress", function (e) {
 map.on('click', function(e) {
     const latlng = e.latlng;
     updateMarker(latlng);
-    gravarLocalSototorage(latlng.lat.toFixed(6), latlng.lng.toFixed(6));
+    shareInformations(latlng.lat.toFixed(6), latlng.lng.toFixed(6));
     console.log(`Clique no mapa:`, latlng);
 });
 
@@ -55,9 +55,7 @@ function updateMarker(latlng) {
   }
   map.setView(latlng, 15);
 }
-function gravarLocalSototorage(latituide, longitude){
- 
-    sessionStorage.setItem("latituide", latituide)
-    sessionStorage.setItem("longitude", longitude)
-    console.log("Dados gravados na sessão atual")
+function shareInformations(latituide, longitude){
+    getCurrentDateTime(latituide, longitude);
+    getWeather(null, latituide, longitude);
 }

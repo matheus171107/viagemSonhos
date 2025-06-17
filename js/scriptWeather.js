@@ -39,22 +39,28 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Função assíncrona para buscar os dados do tempo
-    const getWeather = async (city) => {
-        setUIState('loading');
-        const apiURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=pt_br`;
+window.getWeather = async (city, lat = null, lon = null) => {
+    setUIState('loading');
+    const apiURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=pt_br`;
+    const apiURLLat = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=pt_br`;
 
-        try {
-            const res = await fetch(apiURL);
-            if (!res.ok) {
-                // Lança um erro se a cidade não for encontrada (erro 404)
-                throw new Error('Cidade não encontrada');
-            }
-            const data = await res.json();
-            updateUI(data);
-        } catch (error) {
-            setUIState('error');
+    try {
+        let res;
+        if (lat && lon) {
+            res = await fetch(apiURLLat);
+        } else {
+            res = await fetch(apiURL);
         }
-    };
+        if (!res.ok) {
+            throw new Error('Cidade não encontrada');
+        }
+        const data = await res.json();
+        updateUI(data);
+    } catch (error) {
+        console.error(error);
+        setUIState('error');
+    }
+};
 
     // Função para atualizar a interface com os dados recebidos
     const updateUI = (data) => {

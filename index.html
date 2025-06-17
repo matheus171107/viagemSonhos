@@ -28,11 +28,12 @@
   <script src="js/scriptCountdown.js" defer></script>
   <script src="js/scriptDicas.js" defer></script>
   <script src="js/scriptGaleria.js" defer></script>
+  <script src="js/scriptHorario.js" defer></script>
 </head>
 
 <body>
 
-  <header>
+  <header>    
     <h1>Minha Viagem dos Sonhos</h1>
   </header>
 
@@ -143,6 +144,19 @@
       </div>
     </article>
 
+       <!-- Widget: Fuso Horário -->
+    <article class="widget-card">
+        <div class="widget-header">
+            <h2><i class="fa-solid fa-clock"></i>Que horas são?</h2>
+            <p>Consulte o horário local do seu destino!</p>
+        </div>
+        <div style="justify-content: center; display: flex">
+          <div style="align-items: center; display:flex; flex-direction: column;">
+          <p id="timeDate">Você ainda não selecionou seu destino</ptimeDate>
+          <p id="location" style="margin-top: 10px; text-align: center;"></p>
+        </div>
+    </article>
+
     <!-- Widget: Previsão do Tempo -->
     <article class="widget-card">
       <div class="widget-header">
@@ -204,11 +218,10 @@
     <article class="widget-card">
         <div class="widget-header">
             <h2><i class="fa-solid fa-hourglass-half"></i> Contagem Regressiva</h2>
-            <p>Adicione um destino e a data para começar!</p>
+            <p>Nós diga quanto tempo para sua proxíma vaigem</p>
         </div>
         <div class="widget-body">
             <div class="countdown-creator">
-                <input type="text" id="destination-input" placeholder="Destino da Viagem">
                 <input type="datetime-local" id="date-input">
                 <button id="add-trip-btn" class="btn-primary">Adicionar</button>
             </div>
@@ -236,6 +249,7 @@
             </button>
         </div>
     </article>
+
 
   </main>
 

@@ -1,18 +1,28 @@
-const lat = sessionStorage.getItem("latitude")
-const lon = sessionStorage.getItem("logitude")
-const API_KEY = '5ST1A63YVLQ2'
-const apiUrl = `http://api.timezonedb.com/v2.1/get-time-zone?key=${API_KEY}&format=json&by=position&lat=${lat}&lng=${lon}`;
-console.log(lon)
+const API_KEY = '5ST1A63YVLQ2';
+const timeDate = document.getElementById("timeDate");
+const cidade = document.getElementById("location");
 
-fetch(apiUrl)
-  .then(response => response.json()) 
-  .then(data => {
+function getCurrentDateTime(lat, lon) {
 
-    console.log('Dados recebidos com sucesso:');
-    console.log(data);
+  const apiUrl = `http://api.timezonedb.com/v2.1/get-time-zone?key=${API_KEY}&format=json&by=position&lat=${lat}&lng=${lon}`;
 
-    console.log('A data e hora atual em São Paulo é:', data);
-  })
-  .catch(error => {
-    console.error('Houve um problema com a requisição:', error);
-  });
+  fetch(apiUrl)
+    .then(response => response.json()) 
+    .then(data => {
+      const dateTime = data.formatted.split(" ");
+      const hora = dateTime[1].substring(0, 5);
+      const dataFormatada = dateTime[0];
+      console.log(data)
+      timeDate.innerHTML = `
+        <h1>${hora}</h1>
+        <h4>${dataFormatada}</h4>`;
+      cidade.innerHTML = `${data.cityName} - ${data.countryCode} <br> ${data.zoneName}`;
+
+      timeDate.style.fontSize = "3rem";
+      timeDate.style.textAlign = "center";
+      timeDate.style.marginTop = "80px";
+    })
+    .catch(error => {
+      console.error('Houve um problema com a requisição:', error);
+    });
+}

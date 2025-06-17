@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- SELETORES DE ELEMENTOS ---
-    const destinationInput = document.getElementById('destination-input');
     const dateInput = document.getElementById('date-input');
     const addTripBtn = document.getElementById('add-trip-btn');
     const countdownContainer = document.getElementById('countdown-container');
@@ -10,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let activeCountdowns = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
     const saveCountdowns = () => {
-        const dataToSave = activeCountdowns.map(({ id, destination, targetDate, paused }) => ({ id, destination, targetDate, paused }));
+        const dataToSave = activeCountdowns.map(({ id, targetDate, paused }) => ({ id, targetDate, paused }));
         localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
     };
 
@@ -52,7 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderCountdown = (countdownData) => {
         const cardHTML = `
             <div class="countdown-card" data-id="${countdownData.id}">
-                <h3>Viagem para: ${countdownData.destination}</h3>
                 <div class="timer">
                     <div><span class="days">00</span>D</div>
                     <div><span class="hours">00</span>H</div>
@@ -70,10 +68,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const addTrip = () => {
-        const destination = destinationInput.value.trim();
         const dateValue = dateInput.value;
 
-        if (!destination || !dateValue) {
+        if (!dateValue) {
             alert('Por favor, preencha o destino e a data da viagem.');
             return;
         }
@@ -86,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const newCountdown = {
             id: `trip-${Date.now()}`,
-            destination,
             targetDate,
             paused: false,
             intervalId: null
@@ -96,7 +92,6 @@ document.addEventListener('DOMContentLoaded', () => {
         saveCountdowns();
         renderCountdown(newCountdown);
 
-        destinationInput.value = '';
         dateInput.value = '';
     };
 
