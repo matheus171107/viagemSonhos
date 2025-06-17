@@ -1,509 +1,394 @@
 /* ==========================================================================
-   1. Variáveis Globais e Estilos Base
+   SUMÁRIO
+   1. Reset Global e Variáveis de Design
+   2. Layout Principal (Header, Main, Footer)
+   3. Estilo Base dos Widgets (Article.widget-card)
+   4. Componentes Reutilizáveis (Botões, Inputs, Listas)
+   5. Estilos Específicos dos Widgets
+   6. Lightbox da Galeria
+   7. Media Queries (Responsividade)
    ========================================================================== */
 
+/* ==========================================================================
+   1. Reset Global e Variáveis de Design
+   ========================================================================== */
 :root {
-    --cor-primaria: #508AFF;
-    --cor-primaria-hover: #3a75e8;
-    --cor-perigo: #ff4d4d;
-    --cor-perigo-hover: #e60000;
-    --cor-laranja: #e67e22;
-    --cor-laranja-hover: #d35400;
+    /* Paleta de Cores */
+    --color-primary: #007bff;
+    --color-primary-hover: #0056b3;
+    --color-danger: #dc3545;
+    --color-danger-hover: #c82333;
+    --color-success: #28a745;
+    --color-text-light: #ffffff;
+    --color-text-dark: #343a40;
+    --color-text-muted: #6c757d;
+    --background-widget: rgba(255, 255, 255, 0.65);
+    --background-body: #e9ecef;
+    --border-color: rgba(0, 0, 0, 0.1);
 
-    /* ALTERAÇÃO: Adicionada uma nova cor para o fundo da sidebar */
-    --cor-fundo-sidebar: rgba(240, 242, 245, 0.9);
-    --cor-fundo-widget: rgba(255, 255, 255, 0.8);
-    --cor-fundo-item-lista: #f9f9f9;
-    --cor-fundo-item-concluido: #e9ecef;
-    
-    --cor-texto-branco: #ffffff;
-    --cor-texto-escuro: #333;
-    --cor-texto-cinza: #888;
-    
-    --borda-arredondada: 20px;
-    --borda-arredondada-interna: 8px;
+    /* Dimensões e Efeitos */
+    --border-radius: 12px;
+    --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    --transition-fast: all 0.2s ease-in-out;
+    --transition-medium: all 0.3s ease-in-out;
+
+    /* Fontes */
+    --font-primary: "Instrument Serif", serif;
+    --font-secondary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 body {
+    font-family: var(--font-secondary);
     background-image: url('../img/background.png');
     background-size: cover;
+    background-position: center;
     background-attachment: fixed;
-    font-family: "Instrument Serif", serif;
+    background-color: var(--background-body);
+    color: var(--color-text-dark);
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    margin: 0;
-    min-height: 100vh;
-    color: var(--cor-texto-escuro);
+}
+
+.hidden {
+    display: none !important;
 }
 
 /* ==========================================================================
-   2. Layout Principal (Header, Sidebar, Main Content)
+   2. Layout Principal (Header, Main, Footer)
    ========================================================================== */
-
 header {
-    display: flex;
-    width: 100%;
-    height: 120px;
-    justify-content: center;
-    align-items: center;
-    background-color: var(--cor-primaria);
-    color: var(--cor-texto-branco);
-    flex-shrink: 0;
+    background: #2c3e50;
+    color: var(--color-text-light);
+    text-align: center;
+    padding: 25px 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    z-index: 100;
 }
 
 header h1 {
-    font-size: 53pt;
-}
-
-.content-wrapper {
-    display: flex;
-    flex-grow: 1;
-    width: 100%;
-    padding: 20px;
-    gap: 20px;
-}
-
-aside {
-    flex: 0 0 360px;
-    display: flex;
+    font-family: var(--font-primary);
+    font-size: 2.8rem;
+    font-weight: normal;
 }
 
 main {
     flex-grow: 1;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    align-content: flex-start;
+    padding: 25px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 25px;
+    align-content: start;
 }
 
-/* ==========================================================================
-   3. Estilo Padrão para Widgets do CONTEÚDO PRINCIPAL
-   ========================================================================== */
-
-/* ALTERAÇÃO: Removido .checklist-container daqui para que ele tenha seu próprio estilo */
-.widgets, .widgetsMap {
-    background-color: var(--cor-fundo-widget);
-    border-radius: var(--borda-arredondada);
-    padding: 25px;
+footer {
+    background-color: #2c3e50;
+    /* Um azul escuro mais sóbrio */
+    color: rgba(255, 255, 255, 0.8);
+    padding: 40px 20px;
+    margin-top: 40px;
+    text-align: center;
     display: flex;
     flex-direction: column;
-}
-
-.widgets h3, .widgetsMap h3, .checklist-container h3, .conversor-container h2 {
-    font-size: 1.8rem;
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-family: "Instrument Serif", serif;
-    text-align: center;
-}
-
-/* ==========================================================================
-   4. Estilos Específicos dos Widgets
-   ========================================================================== */
-
-/* --- Widget do Mapa --- */
-.widgetsMap {
-    flex: 2 1 500px;
-    min-height: 450px;
     align-items: center;
+    gap: 25px;
 }
-.widgetsMap .input-container {
+
+.footer-title {
+    font-family: var(--font-primary);
+    font-size: 1.6rem;
+    color: var(--color-text-light);
+}
+
+.footer-credits {
+    font-size: 1rem;
+}
+
+.footer-credits span {
+    font-weight: bold;
+    color: var(--color-text-light);
+}
+
+.footer-contacts {
     display: flex;
-    align-items: center;
-    width: 100%;
-    margin-bottom: 15px;
+    flex-direction: column;
     gap: 10px;
 }
-#searchInput {
-    flex-grow: 1;
-}
-#searchButton {
-    cursor: pointer;
-}
-#map {
-    height: 100%;
-    width: 100%;
-    border-radius: var(--borda-arredondada-interna);
+
+.footer-contacts a {
+    color: inherit;
+    text-decoration: none;
+    transition: var(--transition-fast);
 }
 
-/* --- Widgets da Lista de Destinos e Conversor --- */
-.widgets {
-    flex: 1 1 400px;
-    min-height: 450px;
-}
-.widgets .container {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-/* --- WIDGET DO CHECKLIST (SIDEBAR) --- */
-/* ALTERAÇÃO: Bloco de estilo próprio para o checklist */
-.checklist-container {
-    width: 100%;
-    height: 100%; /* MUDANÇA 1: Garante que o container ocupe toda a altura da sidebar */
-    background-color: var(--cor-fundo-sidebar); /* MUDANÇA 2: Nova cor de fundo para diferenciar */
-    border-radius: var(--borda-arredondada);
-    padding: 25px;
-    flex-direction: column;
-}
-
-/* --- Listas Roláveis (UL) --- */
-#listaTarefas, #checklistUL {
-    list-style-type: none;
-    flex-grow: 1;
-    overflow-y: auto;
-    padding-right: 8px;
-}
-#listaTarefas {
-    margin-top: 20px;
-}
-
-/* --- Itens da Lista (LI) --- */
-#listaTarefas li, #checklistUL li {
-    background-color: var(--cor-fundo-item-lista);
-    padding: 12px 15px;
-    margin-bottom: 10px;
-    border-radius: var(--borda-arredondada-interna);
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-#listaTarefas li {
-    justify-content: space-between;
-    border-left: 5px solid var(--cor-primaria);
-}
-#checklistUL li.completed {
-    background-color: var(--cor-fundo-item-concluido);
-}
-#checklistUL li.completed .item-text {
-    text-decoration: line-through;
-    color: var(--cor-texto-cinza);
-}
-#checklistUL li .item-text {
-    flex-grow: 1;
-}
-
-/* --- Conversor de Moedas --- */
-.conversor-header {
-    text-align: center;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #ddd;
-}
-.conversor-header p {
-    font-size: 0.9rem;
-    opacity: 0.8;
-}
-.conversor-body {
-    padding-top: 15px;
-}
-.conversor-body .input-group {
-    margin-bottom: 15px;
-}
-.conversor-body label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-}
-.swap-btn {
-    background-color: var(--cor-laranja);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin: 0 auto 15px auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.swap-btn:hover {
-    background-color: var(--cor-laranja-hover);
-}
-.resultado {
-    background-color: #1abc9c;
-    color: var(--cor-texto-branco);
-    padding: 15px;
-    border-radius: var(--borda-arredondada-interna);
-    text-align: center;
-    font-weight: bold;
+.footer-contacts a:hover {
+    color: var(--color-text-light);
+    text-decoration: underline;
 }
 
 /* ==========================================================================
-   5. Elementos Genéricos (Inputs, Botões)
+   3. Estilo Base dos Widgets (Article.widget-card)
+   ========================================================================== */
+.widget-card {
+    background: var(--background-widget);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    transition: var(--transition-medium);
+}
+
+.widget-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.2);
+}
+
+.widget-header {
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+}
+
+.widget-header h2 {
+    font-family: var(--font-primary);
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+}
+
+.widget-header h2 i {
+    margin-right: 12px;
+    color: var(--color-primary);
+}
+
+.widget-header p {
+    font-size: 0.95rem;
+    color: var(--color-text-muted);
+}
+
+.widget-body {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    flex-grow: 1;
+    /* Permite que o corpo do widget cresça */
+}
+
+/* ==========================================================================
+   4. Componentes Reutilizáveis (Botões, Inputs, Listas)
    ========================================================================== */
 
-input[type="text"], input[type="number"], select {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: var(--borda-arredondada-interna);
-    font-size: 1rem;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-input:focus, select:focus {
-    outline: none;
-    border-color: var(--cor-primaria);
-    box-shadow: 0 0 0 3px rgba(80, 138, 255, 0.3);
-}
-
-button {
-    padding: 12px 20px;
-    color: var(--cor-texto-branco);
-    border: none;
-    border-radius: var(--borda-arredondada-interna);
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
-    flex-shrink: 0;
-}
-
-/* Variações de cor dos botões */
-#adicionarTarefa, #addChecklistItemBtn, .btn-converter {
-    background-color: var(--cor-primaria);
-}
-#adicionarTarefa:hover, #addChecklistItemBtn:hover, .btn-converter:hover {
-    background-color: var(--cor-primaria-hover);
-}
-
-#limparLista, #listaTarefas li button, #checklistUL li .remove-btn {
-    background-color: var(--cor-perigo);
-    padding: 8px 12px;
-    font-size: 0.9rem;
-}
-
-#clearChecklistBtn{
-    background-color: var(--cor-perigo);
-    padding: 12px 20px;
-    font-size: 0.9rem;
-    margin-top: 10px;
-}
-
-#clearChecklistBtn:hover{
-    background-color: var(--cor-perigo-hover);
-}
-
-#limparLista {
-    padding: 12px 20px;
-    font-size: 1rem;
-    margin-top: auto;
-}
-#limparLista:hover, #listaTarefas li button:hover, #checklistUL li .remove-btn:hover {
-    background-color: var(--cor-perigo-hover);
-}
-
-
-/* -- DIÁRIO DE VIAGEM --*/
-
-:root {
-    --azul: #3498db;
-    --azul-escuro: #2980b9;
-    --laranja: #e67e22;
-    --laranja-escuro: #d35400;
-    --verde-agua: #1abc9c;
-    --verde-agua-escuro: #16a085;
-    --branco: #ffffff;
-    --cinza-claro: #f5f5f5;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: var(--cinza-claro);
-    padding: 20px;
-}
-
-.diario-container {
-    width: 100%;
-    max-width: 800px;
-    background: var(--branco);
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-}
-
-.header-widgets {
-    background: linear-gradient(135deg, var(--azul), var(--verde-agua));
-    color: var(--branco);
-    padding: 25px;
-    text-align: center;
-    position: relative;
-}
-
-.header-widgets h2 {
-    font-size: 2rem;
-    margin-bottom: 5px;
-}
-
-.header-widgets p {
-    opacity: 0.9;
-    font-size: 1rem;
-}
-
-.header-widgets .marca-pagina {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: var(--laranja);
-    color: var(--branco);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-}
-
-.diario-body {
-    padding: 25px;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    color: #555;
-    font-weight: 500;
-}
-
-.form-group input, 
-.form-group textarea, 
-.form-group select {
+/* --- Inputs e Formulários --- */
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="datetime-local"],
+select,
+textarea {
     width: 100%;
     padding: 12px 15px;
-    border: 2px solid #ddd;
-    border-radius: 8px;
     font-size: 1rem;
-    transition: all 0.3s;
+    font-family: var(--font-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.7);
+    transition: var(--transition-fast);
 }
 
-.form-group input:focus, 
-.form-group textarea:focus, 
-.form-group select:focus {
-    border-color: var(--azul);
+input:focus,
+select:focus,
+textarea:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    background-color: #fff;
 }
 
-.form-group textarea {
+textarea {
     min-height: 120px;
     resize: vertical;
 }
 
-.form-row {
+.input-group {
     display: flex;
-    gap: 15px;
+    gap: 10px;
 }
 
-.form-row .form-group {
-    flex: 1;
+.input-group input {
+    flex-grow: 1;
 }
 
-.btn {
-    background-color: var(--laranja);
-    color: var(--branco);
-    border: none;
-    border-radius: 8px;
+.input-group button {
+    flex-shrink: 0;
+    width: 50px;
+}
+
+/* --- Botões --- */
+button,
+.btn-primary {
     padding: 12px 20px;
     font-size: 1rem;
-    font-weight: 500;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: var(--transition-fast);
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
 }
 
-.btn:hover {
-    background-color: var(--laranja-escuro);
+.btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-text-light);
+}
+
+.btn-primary:hover {
+    background-color: var(--color-primary-hover);
     transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
 }
 
-.btn i {
-    margin-right: 8px;
+.btn-danger {
+    background-color: var(--color-danger);
+    color: var(--color-text-light);
 }
 
-.btn-salvar {
-    background-color: var(--verde-agua);
+.btn-danger:hover {
+    background-color: var(--color-danger-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
 }
 
-.btn-salvar:hover {
-    background-color: var(--verde-agua-escuro);
+/* --- Listas Genéricas --- */
+.widget-list {
+    list-style: none;
+    overflow-y: auto;
+    flex-grow: 1;
+    max-height: 280px;
+    padding-right: 5px;
 }
 
-.entradas-container {
-    margin-top: 30px;
-    border-top: 2px dashed #eee;
-    padding-top: 20px;
+.widget-list li {
+    background-color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 10px;
+    padding: 12px 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border-left: 5px solid var(--color-primary);
+    transition: var(--transition-fast);
+    cursor: pointer;
 }
 
+.widget-list li:hover {
+    transform: translateX(5px);
+    background-color: #fff;
+}
+
+.widget-list li.completed {
+    border-left-color: var(--color-success);
+    opacity: 0.7;
+}
+
+.widget-list li.completed .item-text {
+    text-decoration: line-through;
+}
+
+.widget-list .empty-state {
+    text-align: center;
+    color: var(--color-text-muted);
+    padding: 20px;
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    font-style: italic;
+    cursor: default;
+    border-left: none;
+}
+
+.widget-list .empty-state:hover {
+    transform: none;
+}
+
+
+.remove-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-danger);
+    padding: 5px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    width: auto;
+    transition: var(--transition-fast);
+}
+
+.remove-btn:hover {
+    transform: scale(1.2);
+}
+
+/* ==========================================================================
+   5. Estilos Específicos dos Widgets
+   ========================================================================== */
+
+/* --- Layout de Grid Dinâmico --- */
+.widget-diario,
+.widget-galeria {
+    grid-column: 1 / -1;
+    /* Ocupa a largura total por padrão */
+}
+
+/* --- Diário --- */
 .entradas-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
-}
-
-.entradas-header h3 {
-    color: var(--azul-escuro);
+    margin-top: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .entrada {
-    background-color: var(--cinza-claro);
-    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
     padding: 15px;
-    margin-bottom: 15px;
-    border-left: 4px solid var(--verde-agua);
-    transition: all 0.3s;
-}
-
-.entrada:hover {
-    transform: translateX(5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    margin-top: 15px;
 }
 
 .entrada-header {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 10px;
-    color: var(--azul-escuro);
-    font-weight: 500;
-}
-
-.entrada-local {
-    color: var(--laranja);
-    font-weight: bold;
-}
-
-.entrada-data {
-    color: #777;
     font-size: 0.9rem;
+    color: var(--color-text-muted);
+    margin-bottom: 10px;
+}
+
+.entrada-local img {
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.entrada h4 {
+    font-family: var(--font-primary);
+    font-size: 1.4rem;
+    margin-bottom: 10px;
 }
 
 .entrada-texto {
-    color: #555;
-    line-height: 1.5;
-    margin-bottom: 10px;
+    line-height: 1.6;
+    margin-bottom: 15px;
 }
 
 .entrada-acoes {
@@ -513,48 +398,390 @@ body {
 }
 
 .btn-acao {
-    background: none;
-    border: none;
-    color: #777;
-    cursor: pointer;
+    background: transparent;
+    padding: 5px 10px;
     font-size: 0.9rem;
-    transition: all 0.2s;
+    border: 1px solid var(--border-color);
 }
 
-.btn-acao:hover {
-    color: var(--azul);
+.btn-editar {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.btn-excluir {
+    color: var(--color-danger);
+    border-color: var(--color-danger);
 }
 
 .btn-editar:hover {
-    color: var(--verde-agua);
+    background-color: var(--color-primary);
+    color: white;
 }
 
 .btn-excluir:hover {
-    color: #e74c3c;
+    background-color: var(--color-danger);
+    color: white;
 }
 
-.nenhuma-entrada {
-    text-align: center;
-    color: #777;
-    padding: 30px;
+/* --- Mapa --- */
+#map {
+    height: 100%;
+    min-height: 350px;
+    border-radius: 8px;
+    flex-grow: 1;
+}
+
+/* --- Previsão do Tempo --- */
+#weather-data .temp-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+}
+
+#temperature {
+    font-size: 3.2rem;
+    font-weight: bold;
+}
+
+#weather-icon {
+    width: 80px;
+    height: 80px;
+}
+
+#weather-description {
     font-style: italic;
+    color: var(--color-text-muted);
+    margin-bottom: 15px;
+    text-transform: capitalize;
 }
 
-.local-flag {
-    width: 24px;
-    height: 16px;
-    margin-right: 8px;
-    vertical-align: middle;
-    border-radius: 2px;
+.details-container {
+    background: rgba(0, 0, 0, 0.05);
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
 }
 
-@media (max-width: 600px) {
-    .form-row {
-        flex-direction: column;
-        gap: 0;
+#weather-error p,
+#weather-initial-message p {
+    color: var(--color-text-muted);
+    padding: 20px;
+}
+
+/* --- Conversor de Moedas --- */
+.moedas-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#swap-btn {
+    background-color: var(--color-text-muted);
+    color: white;
+    font-size: 1.2rem;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+#swap-btn:hover {
+    background-color: var(--color-text-dark);
+}
+
+.resultado-container {
+    text-align: center;
+    margin-top: 10px;
+    background-color: rgba(0, 123, 255, 0.08);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+#resultado {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: var(--color-primary);
+    margin-bottom: 5px;
+}
+
+#taxa-info {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+
+/* --- Contador Regressivo --- */
+.countdown-creator {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.countdown-creator input {
+    flex: 1;
+}
+
+.countdown-card {
+    background: rgba(255, 255, 255, 0.7);
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    margin-top: 10px;
+}
+
+.countdown-card .timer {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    margin: 15px 0;
+}
+
+.timer>div {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+}
+
+.timer span {
+    display: block;
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: var(--color-primary);
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.controls button {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+}
+
+/* --- Dicas de Viagem --- */
+#dica-container {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    padding: 25px 20px;
+    text-align: center;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+#dica-placeholder {
+    color: var(--color-text-muted);
+}
+
+#dica-icone {
+    font-size: 2.5rem;
+    color: var(--color-primary);
+    margin-bottom: 15px;
+}
+
+#dica-texto {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+#dica-tipo {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: var(--color-text-light);
+    background-color: var(--color-text-muted);
+    padding: 4px 10px;
+    border-radius: 12px;
+    text-transform: uppercase;
+}
+
+#btn-nova-dica {
+    width: 100%;
+}
+
+/* --- Galeria de Fotos --- */
+.upload-form {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.upload-form label.btn-primary {
+    cursor: pointer;
+}
+
+#galeria-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.foto-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    aspect-ratio: 1 / 1;
+    cursor: pointer;
+}
+
+.foto-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition-medium);
+}
+
+.foto-wrapper:hover img {
+    transform: scale(1.1);
+}
+
+.btn-remover-foto {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: rgba(220, 53, 69, 0.8);
+    color: white;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: var(--transition-fast);
+    transform: scale(0.8);
+    z-index: 10;
+    padding: 0;
+}
+
+.foto-wrapper:hover .btn-remover-foto {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* ==========================================================================
+   6. Lightbox da Galeria
+   ========================================================================== */
+#lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+    transition: opacity 0.3s ease;
+}
+
+#lightbox.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.lightbox-conteudo {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+}
+
+#lightbox-img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 8px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+}
+
+.lightbox-btn-fechar {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 3rem;
+    color: white;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    z-index: 1001;
+}
+
+.lightbox-btn-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: none;
+    font-size: 2.5rem;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+}
+
+.lightbox-btn-nav:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.lightbox-btn-anterior {
+    left: 20px;
+}
+
+.lightbox-btn-proximo {
+    right: 20px;
+}
+
+/* ==========================================================================
+   7. Media Queries (Responsividade)
+   ========================================================================== */
+@media (min-width: 1200px) {
+
+    /* Em telas largas, o diário e a galeria ocupam duas colunas */
+    .widget-diario,
+    .widget-galeria {
+        grid-column: span 2;
     }
-    
-    .diario-header h2 {
-        font-size: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+
+    main {
+        padding: 15px;
+        gap: 15px;
+        grid-template-columns: 1fr;
+        /* Força uma única coluna em telas menores */
+    }
+
+    .widget-diario,
+    .widget-galeria {
+        grid-column: 1 / -1;
+        /* Mantém a largura total */
     }
 }

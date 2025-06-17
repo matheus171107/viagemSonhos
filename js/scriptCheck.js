@@ -1,100 +1,102 @@
-        // Seleciona os elementos do DOM
-        const checklistInput = document.getElementById("checklistItemInput");
-        const addChecklistBtn = document.getElementById("addChecklistItemBtn");
-        const checklistUL = document.getElementById("checklistUL");
+document.addEventListener('DOMContentLoaded', () => {
 
-        // Chave para salvar no localStorage (evita conflitos)
-        const STORAGE_KEY = 'checklistData';
+    // --- SELETORES DE ELEMENTOS (agrupados no topo) ---
+    const checklistInput = document.getElementById("checklistItemInput");
+    const addChecklistBtn = document.getElementById("addChecklistItemBtn");
+    const checklistUL = document.getElementById("checklistUL");
+    const clearChecklistBtn = document.getElementById("clearChecklistBtn");
 
-        // Carrega os itens do localStorage ou inicia um array vazio
-        // JSON.parse() converte a string de volta para um array de objetos
-        let checklistItems = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    // Chave para salvar no localStorage
+    const STORAGE_KEY = 'checklistData';
 
-        // Função para SALVAR o estado atual no localStorage
-        // JSON.stringify() converte o array de objetos em uma string para armazenamento
-        const saveItems = () => {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(checklistItems));
-        };
+    // Carrega os itens do localStorage ou inicia um array vazio
+    let checklistItems = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
-        // Função para RENDERIZAR (desenhar) a lista na tela
-        const renderChecklist = () => {
-            // 1. Limpa a lista atual para não duplicar itens
-            checklistUL.innerHTML = '';
+    // --- FUNÇÕES ---
 
-            // 2. Itera sobre cada item no array `checklistItems`
-            checklistItems.forEach((item, index) => {
-                // Cria os elementos HTML para cada item
-                const li = document.createElement('li');
-                if (item.completed) {
-                    li.classList.add('completed'); // Adiciona a classe se estiver concluído
-                }
+    // Função para SALVAR o estado atual no localStorage
+    const saveItems = () => {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(checklistItems));
+    };
 
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.checked = item.completed;
-                // RF07.2: Marcar/desmarcar item
-                checkbox.addEventListener('change', () => {
-                    checklistItems[index].completed = !checklistItems[index].completed;
-                    saveItems(); // Salva a mudança
-                    renderChecklist(); // Redesenha a lista para aplicar o estilo
-                });
+    // Função para RENDERIZAR (desenhar) a lista na tela
+    const renderChecklist = () => {
+        checklistUL.innerHTML = '';
 
-                const textSpan = document.createElement('span');
-                textSpan.className = 'item-text';
-                textSpan.textContent = item.text;
+        if (checklistItems.length === 0) {
+            // Adiciona uma mensagem amigável quando a lista está vazia
+            checklistUL.innerHTML = '<li class="empty-message">Sua checklist está vazia. Adicione um item!</li>';
+            return;
+        }
 
-                const removeBtn = document.createElement('button');
-                removeBtn.className = 'remove-btn';
-                removeBtn.textContent = 'Remover';
-                // RF07.3: Remover item
-                removeBtn.addEventListener('click', () => {
-                    checklistItems.splice(index, 1); // Remove o item do array pelo seu índice
-                    saveItems(); // Salva a mudança
-                    renderChecklist(); // Redesenha a lista
-                });
+        checklistItems.forEach((item, index) => {
+            const li = document.createElement('li');
+            li.classList.toggle('completed', item.completed); // Aplica classe se concluído
 
-                // Monta o item da lista (LI)
-                li.appendChild(checkbox);
-                li.appendChild(textSpan);
-                li.appendChild(removeBtn);
-
-                // Adiciona o LI completo à lista UL
-                checklistUL.appendChild(li);
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = item.completed;
+            
+            // Otimização: atualiza apenas o item clicado, sem redesenhar a lista toda
+            checkbox.addEventListener('change', () => {
+                checklistItems[index].completed = checkbox.checked;
+                saveItems();
+                li.classList.toggle('completed', checkbox.checked);
             });
-        };
 
-        // RF07.1: Adicionar novo item
-        addChecklistBtn.addEventListener('click', () => {
-            const text = checklistInput.value.trim();
-            if (text !== '') {
-                // Adiciona o novo item como um objeto ao nosso array
-                checklistItems.push({ text: text, completed: false });
-                checklistInput.value = ''; // Limpa o input
-                saveItems(); // Salva o novo estado
-                renderChecklist(); // Redesenha a lista com o novo item
-            }
+            const textSpan = document.createElement('span');
+            textSpan.className = 'item-text';
+            textSpan.textContent = item.text;
+
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-btn';
+            removeBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>'; // Usando ícone
+            removeBtn.title = 'Remover item'; // Acessibilidade
+            
+            removeBtn.addEventListener('click', () => {
+                checklistItems.splice(index, 1);
+                saveItems();
+                renderChecklist(); // Precisa redesenhar para remover o elemento do DOM
+            });
+
+            li.appendChild(checkbox);
+            li.appendChild(textSpan);
+            li.appendChild(removeBtn);
+            checklistUL.appendChild(li);
         });
+    };
+    
+    // Lógica de adição extraída para uma função
+    const handleAddItem = () => {
+        const text = checklistInput.value.trim();
+        if (text !== '') {
+            checklistItems.push({ text: text, completed: false });
+            checklistInput.value = '';
+            saveItems();
+            renderChecklist();
+            checklistInput.focus(); // UX: foca no input novamente
+        }
+    };
+    
+    // --- EVENT LISTENERS ---
 
-        // Permite adicionar com a tecla "Enter"
-        checklistInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                addChecklistBtn.click();
-            }
-        });
+    addChecklistBtn.addEventListener('click', handleAddItem);
 
+    checklistInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            handleAddItem();
+        }
+    });
 
-        // RF07.4: Carregamento inicial da lista
-        // Chama a função de renderização assim que a página carrega
-        // para mostrar os itens que foram salvos anteriormente.
-        document.addEventListener('DOMContentLoaded', renderChecklist);
-
-        // RF07.5: Limpar lista
-        const clearChecklistBtn = document.getElementById("clearChecklistBtn");
-        clearChecklistBtn.addEventListener('click', () => {
-            if (confirm("Você tem certeza que deseja limpar a lista?")) {
-                checklistItems = []; // Limpa o array
-                saveItems(); // Salva o estado vazio
-                renderChecklist(); // Redesenha a lista vazia
-            }
-        });
-        
+    clearChecklistBtn.addEventListener('click', () => {
+        // Só mostra o 'confirm' se a lista não estiver vazia
+        if (checklistItems.length > 0 && confirm("Você tem certeza que deseja limpar toda a checklist?")) {
+            checklistItems = [];
+            saveItems();
+            renderChecklist();
+        }
+    });
+    
+    // Carregamento inicial da lista
+    renderChecklist();
+});

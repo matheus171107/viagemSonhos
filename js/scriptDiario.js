@@ -1,68 +1,61 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // --- SELETORES DE ELEMENTOS ---
     const form = document.getElementById('form-entrada');
     const listaEntradas = document.getElementById('lista-entradas');
     const filtro = document.getElementById('filtro');
-    
-    // Carrega entradas do localStorage
+    const btnSalvar = form.querySelector('.btn-salvar'); // Seletor corrigido
+
+    // --- ESTADO DA APLICAÇÃO ---
     let entradas = JSON.parse(localStorage.getItem('diarioViagem')) || [];
-    
-    // Exibe entradas
-    function exibirEntradas(filtroValue = 'todos') {
+    let indiceEdicao = null; // Para controlar qual entrada está sendo editada
+
+    // --- FUNÇÕES ---
+
+    // Função para salvar no localStorage
+    const salvarEntradas = () => {
+        localStorage.setItem('diarioViagem', JSON.stringify(entradas));
+    };
+
+    // Formata data para 'dd de Mês de aaaa'
+    const formatarData = (dataString) => {
+        // Corrigindo problema de timezone ao criar a data
+        const [ano, mes, dia] = dataString.split('-');
+        const data = new Date(ano, mes - 1, dia);
+        const options = { day: '2-digit', month: 'long', year: 'numeric', timeZone: 'UTC' };
+        return data.toLocaleDateString('pt-BR', options);
+    };
+
+    // Mapeia nome de país para código de 2 letras para a API de bandeiras
+    const getCountryCode = (local) => {
+        const paises = { 'brasil': 'br', 'estados unidos': 'us', 'frança': 'fr', 'japao': 'jp', 'itália': 'it', 'portugal': 'pt', 'espanha': 'es', 'argentina': 'ar' };
+        const localLower = local.toLowerCase();
+        for (const pais in paises) {
+            if (localLower.includes(pais)) return paises[pais];
+        }
+        return 'xx'; // Código para bandeira genérica/desconhecida
+    };
+
+    // Exibe/Renderiza as entradas na tela
+    const exibirEntradas = () => {
+        const filtroValue = filtro.value;
+        listaEntradas.innerHTML = '';
+
         if (entradas.length === 0) {
-            listaEntradas.innerHTML = `
-                <div class="nenhuma-entrada">
-                    <i class="fas fa-book" style="font-size: 2rem; margin-bottom: 10px; opacity: 0.3;"></i>
-                    <p>Nenhuma entrada ainda. Comece a escrever suas aventuras!</p>
-                </div>
-            `;
+            listaEntradas.innerHTML = '<p class="empty-message">Nenhuma entrada ainda. Comece a escrever!</p>';
             return;
         }
+
+        const entradasOrdenadas = [...entradas].sort((a, b) => new Date(b.data) - new Date(a.data));
         
-        let entradasFiltradas = [...entradas];
-        const hoje = new Date();
-        hoje.setHours(0, 0, 0, 0);
-        
-        if (filtroValue === 'hoje') {
-            entradasFiltradas = entradas.filter(entrada => {
-                const entradaDate = new Date(entrada.data);
-                return entradaDate.toDateString() === hoje.toDateString();
-            });
-        } else if (filtroValue === 'semana') {
-            const semanaPassada = new Date(hoje);
-            semanaPassada.setDate(hoje.getDate() - 7);
-            
-            entradasFiltradas = entradas.filter(entrada => {
-                const entradaDate = new Date(entrada.data);
-                return entradaDate >= semanaPassada;
-            });
-        } else if (filtroValue === 'mes') {
-            const mesPassado = new Date(hoje);
-            mesPassado.setMonth(hoje.getMonth() - 1);
-            
-            entradasFiltradas = entradas.filter(entrada => {
-                const entradaDate = new Date(entrada.data);
-                return entradaDate >= mesPassado;
-            });
-        }
-        
-        // Ordena do mais recente para o mais antigo
-        entradasFiltradas.sort((a, b) => new Date(b.data) - new Date(a.data));
-        
-        if (entradasFiltradas.length === 0) {
-            listaEntradas.innerHTML = `
-                <div class="nenhuma-entrada">
-                    <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 10px; opacity: 0.3;"></i>
-                    <p>Nenhuma entrada encontrada com este filtro.</p>
-                </div>
-            `;
-            return;
-        }
-        
-        listaEntradas.innerHTML = entradasFiltradas.map((entrada, index) => `
-            <div class="entrada" data-id="${index}">
+        const entradasHTML = entradasOrdenadas.map((entrada, index) => {
+            // Usa o índice original do array não ordenado para ter um ID estável
+            const originalIndex = entradas.indexOf(entrada);
+
+            return `
+            <div class="entrada" data-index="${originalIndex}">
                 <div class="entrada-header">
                     <span class="entrada-local">
-                        <img src="https://flagcdn.com/w20/${getCountryCode(entrada.local)}.png" class="local-flag" alt="${entrada.local}">
+                        <img src="https://flagcdn.com/w20/${getCountryCode(entrada.local)}.png" class="local-flag" alt="Bandeira">
                         ${entrada.local}
                     </span>
                     <span class="entrada-data">${formatarData(entrada.data)}</span>
@@ -70,106 +63,91 @@ document.addEventListener('DOMContentLoaded', function() {
                 <h4>${entrada.titulo}</h4>
                 <div class="entrada-texto">${entrada.texto.replace(/\n/g, '<br>')}</div>
                 <div class="entrada-acoes">
-                    <button class="btn-acao btn-editar" onclick="editarEntrada(${index})">
-                        <i class="fas fa-edit"></i> Editar
-                    </button>
-                    <button class="btn-acao btn-excluir" onclick="excluirEntrada(${index})">
-                        <i class="fas fa-trash-alt"></i> Excluir
-                    </button>
+                    <button class="btn-acao btn-editar"><i class="fas fa-edit"></i> Editar</button>
+                    <button class="btn-acao btn-excluir"><i class="fas fa-trash-alt"></i> Excluir</button>
                 </div>
-            </div>
-        `).join('');
-    }
-    
-    // Formata data para exibição
-    function formatarData(dataString) {
-        const options = { day: '2-digit', month: 'long', year: 'numeric' };
-        return new Date(dataString).toLocaleDateString('pt-BR', options);
-    }
-    
-    // Simulação de código de país (em app real, usar geolocalização ou seleção)
-    function getCountryCode(local) {
-        const paises = {
-            'Brasil': 'br',
-            'Estados Unidos': 'us',
-            'França': 'fr',
-            'Japão': 'jp',
-            'Itália': 'it',
-            'Portugal': 'pt',
-            'Espanha': 'es',
-            'Argentina': 'ar'
-        };
-        
-        for (const pais in paises) {
-            if (local.includes(pais)) {
-                return paises[pais];
-            }
-        }
-        
-        return 'gl'; // Bandeira genérica
-    }
-    
-    // Adiciona nova entrada
+            </div>`;
+        }).join('');
+
+        listaEntradas.innerHTML = entradasHTML;
+    };
+
+    // --- EVENT LISTENERS ---
+
+    // Adicionar ou Atualizar uma entrada
     form.addEventListener('submit', function(e) {
         e.preventDefault();
-        
-        const novaEntrada = {
+
+        const entradaData = {
             local: document.getElementById('local').value,
             data: document.getElementById('data').value,
             titulo: document.getElementById('titulo').value,
             texto: document.getElementById('texto').value,
             humor: document.getElementById('humor').value,
-            dataCriacao: new Date().toISOString()
         };
-        
-        entradas.push(novaEntrada);
-        localStorage.setItem('diarioViagem', JSON.stringify(entradas));
-        
+
+        if (indiceEdicao !== null) {
+            // Atualizando uma entrada existente
+            entradas[indiceEdicao] = { ...entradas[indiceEdicao], ...entradaData };
+            indiceEdicao = null; // Reseta o índice de edição
+        } else {
+            // Adicionando uma nova entrada
+            entradaData.dataCriacao = new Date().toISOString();
+            entradas.push(entradaData);
+        }
+
+        salvarEntradas();
         form.reset();
-        exibirEntradas(filtro.value);
-        
+        document.getElementById('data').valueAsDate = new Date(); // Reseta data para hoje
+        exibirEntradas();
+
         // Animação de confirmação
-        const btnSalvar = document.querySelector('.btn-salvar');
         btnSalvar.innerHTML = '<i class="fas fa-check"></i> Salvo!';
         setTimeout(() => {
             btnSalvar.innerHTML = '<i class="fas fa-save"></i> Salvar Entrada';
         }, 2000);
     });
-    
-    // Filtra entradas
-    filtro.addEventListener('change', function() {
-        exibirEntradas(this.value);
-    });
-    
-    // Funções globais para editar/excluir
-    window.editarEntrada = function(index) {
-        const entrada = entradas[index];
-        document.getElementById('local').value = entrada.local;
-        document.getElementById('data').value = entrada.data;
-        document.getElementById('titulo').value = entrada.titulo;
-        document.getElementById('texto').value = entrada.texto;
-        document.getElementById('humor').value = entrada.humor;
-        
-        // Remove a entrada antiga
-        entradas.splice(index, 1);
-        localStorage.setItem('diarioViagem', JSON.stringify(entradas));
-        exibirEntradas(filtro.value);
-        
-        // Rolagem suave para o formulário
-        document.getElementById('form-entrada').scrollIntoView({ behavior: 'smooth' });
-    };
-    
-    window.excluirEntrada = function(index) {
-        if (confirm('Tem certeza que deseja excluir esta entrada?')) {
-            entradas.splice(index, 1);
-            localStorage.setItem('diarioViagem', JSON.stringify(entradas));
-            exibirEntradas(filtro.value);
+
+    // Delegação de Eventos para os botões de editar e excluir
+    listaEntradas.addEventListener('click', function(e) {
+        const target = e.target;
+        const btnEditar = target.closest('.btn-editar');
+        const btnExcluir = target.closest('.btn-excluir');
+
+        if (btnEditar) {
+            const entradaDiv = btnEditar.closest('.entrada');
+            const index = parseInt(entradaDiv.dataset.index, 10);
+            const entrada = entradas[index];
+
+            // Preenche o formulário para edição
+            document.getElementById('local').value = entrada.local;
+            document.getElementById('data').value = entrada.data;
+            document.getElementById('titulo').value = entrada.titulo;
+            document.getElementById('texto').value = entrada.texto;
+            document.getElementById('humor').value = entrada.humor;
+
+            indiceEdicao = index; // Armazena o índice da entrada que está sendo editada
+            
+            form.scrollIntoView({ behavior: 'smooth' }); // Rola a tela para o formulário
+            btnSalvar.innerHTML = '<i class="fas fa-save"></i> Atualizar Entrada';
         }
-    };
-    
-    // Define data padrão como hoje
+
+        if (btnExcluir) {
+            if (confirm('Tem certeza que deseja excluir esta entrada?')) {
+                const entradaDiv = btnExcluir.closest('.entrada');
+                const index = parseInt(entradaDiv.dataset.index, 10);
+                
+                entradas.splice(index, 1);
+                salvarEntradas();
+                exibirEntradas();
+            }
+        }
+    });
+
+    // Filtra entradas quando o select muda
+    filtro.addEventListener('change', exibirEntradas);
+
+    // --- INICIALIZAÇÃO ---
     document.getElementById('data').valueAsDate = new Date();
-    
-    // Exibe entradas ao carregar
     exibirEntradas();
 });

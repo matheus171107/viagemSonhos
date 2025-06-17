@@ -1,189 +1,267 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Painel de Viagens dos Sonhos</title>
+<html lang="pt-BR">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-geosearch@3.11.0/dist/geosearch.umd.js"></script>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel de Viagens dos Sonhos</title>
 
-    <link rel="stylesheet" href="css/styleIndex.css" />
-  </head>
+  <!-- Fontes e Ícones -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Dependências Externas (Leaflet para Mapa) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+  <script src="https://unpkg.com/leaflet-geosearch@3.11.0/dist/geosearch.umd.js" defer></script>
+
+  <!-- Nosso CSS e Scripts -->
+  <link rel="stylesheet" href="css/styleIndex.css" />
+  <script src="js/scriptMap.js" defer></script>
+  <script src="js/scriptListaDest.js" defer></script>
+  <script src="js/scriptCheck.js" defer></script>
+  <script src="js/scriptConversor.js" defer></script>
+  <script src="js/scriptWeather.js" defer></script>
+  <script src="js/scriptDiario.js" defer></script>
+  <script src="js/scriptCountdown.js" defer></script>
+  <script src="js/scriptDicas.js" defer></script>
+  <script src="js/scriptGaleria.js" defer></script>
+</head>
+
 <body>
+
   <header>
     <h1>Minha Viagem dos Sonhos</h1>
   </header>
 
-  <!-- O content-wrapper deve ser o container principal para a sidebar e o conteúdo -->
-  <div class="content-wrapper">
-    
-    <!-- O ASIDE (sidebar) vai aqui DENTRO -->
-    <aside>
-      <!-- Checklist de Bagagem -->
-      <div class="checklist-container">
-    <div class="header-widgets">
-        <h2><i class="fas fa-book-open"></i>Checklist de Bagagem</h2>
-        <p>Monte a sua lista de itens para colocar em sua bagagem!</p>
-    </div>
+  <main>
+
+    <!-- Widget: Diário de Viagem -->
+    <article class="widget-card widget-diario">
+      <div class="widget-header">
+        <h2><i class="fa-solid fa-book-open"></i>Meu Diário de Viagem</h2>
+        <p>Registre suas aventuras e memórias</p>
+      </div>
+      <div class="widget-body">
+        <form id="form-entrada">
+          <input type="text" id="local" placeholder="Local (Ex: Paris, França)" required>
+          <input type="date" id="data" required>
+          <input type="text" id="titulo" placeholder="Título da entrada" required>
+          <select id="humor" required>
+            <option value="" disabled selected>Como você está se sentindo?</option>
+            <option value="feliz">😄 Feliz</option>
+            <option value="animado">🤩 Animado</option>
+            <option value="relaxado">😌 Relaxado</option>
+            <option value="cansado">😴 Cansado</option>
+          </select>
+          <textarea id="texto" placeholder="Descreva sua experiência hoje..." required></textarea>
+          <button type="submit" class="btn-primary btn-salvar"><i class="fa-solid fa-save"></i> Salvar Entrada</button>
+        </form>
+        <div class="entradas-container">
+          <div class="entradas-header">
+            <h3><i class="fas fa-history"></i> Entradas Anteriores</h3>
+            <select id="filtro">
+              <option value="todos">Mostrar Todos</option>
+              <option value="hoje">Hoje</option>
+              <option value="semana">Últimos 7 dias</option>
+              <option value="mes">Último mês</option>
+            </select>
+          </div>
+          <div id="lista-entradas"></div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Widget: Lista de Destinos -->
+    <article class="widget-card">
+      <div class="widget-header">
+        <h2><i class="fa-solid fa-list-check"></i>Lista de Destinos</h2>
+        <p>Crie sua lista de lugares para visitar!</p>
+      </div>
+      <div class="widget-body">
         <div class="input-group">
-          <input
-            type="text"
-            id="checklistItemInput"
-            placeholder="Ex: Passaporte, carregador..."
-          />
+          <input type="text" id="novaTarefa" placeholder="Digite um novo destino" />
+          <button id="adicionarTarefa" class="btn-primary" aria-label="Adicionar Destino"><i class="fa-solid fa-plus"></i></button>
         </div>
-        <button id="addChecklistItemBtn">Adicionar Item</button>
-        <button id="clearChecklistBtn">Limpar Checklist</button>
+        <ul id="listaTarefas" class="widget-list"></ul>
+        <button id="limparLista" class="btn-danger">Limpar Lista</button>
+      </div>
+    </article>
 
-        <ul id="checklistUL">
-          <!-- Os itens da lista serão adicionados aqui pelo JavaScript -->
-            </ul>
+    <!-- Widget: Checklist de Bagagem -->
+    <article class="widget-card">
+        <div class="widget-header">
+            <h2><i class="fa-solid fa-suitcase-rolling"></i>Checklist de Bagagem</h2>
+            <p>Organize os itens para não esquecer nada!</p>
         </div>
-        </aside>
+        <div class="widget-body">
+            <div class="input-group">
+                <input type="text" id="checklistItemInput" placeholder="Ex: Passaporte, carregador..." />
+                <button id="addChecklistItemBtn" class="btn-primary" aria-label="Adicionar Item"><i class="fa-solid fa-plus"></i></button>
+            </div>
+            <ul id="checklistUL" class="widget-list"></ul>
+            <button id="clearChecklistBtn" class="btn-danger">Limpar Checklist</button>
+        </div>
+    </article>
 
-        <!-- O MAIN (conteúdo principal) vem logo depois, ainda DENTRO do wrapper -->
-        <main>
-        <!-- MAPA -->
-      <div class="widgetsMap">
-    <div class="header-widgets">
-        <h2><i class="fas fa-book-open"></i>Relógio com fusos horários</h2>
-        <p>Pesquise aqui o fuso horário do seu destino</p>
-    </div>
-        <div style="display: flex; align-items: center; width: 100%; margin: 10px; justify-content: center;">
-          <input
-            type="text"
-            name="findLocate"
-            placeholder="Digite seu destino"
-            id="searchInput"
-          />
-          <img src="img/seta.png" id="searchButton" width="30px" alt="Buscar" style="cursor: pointer;"/>
+    <!-- Widget: Galeria de Fotos -->
+    <article class="widget-card widget-galeria">
+      <div class="widget-header">
+        <h2><i class="fa-solid fa-camera-retro"></i>Minhas Fotos de Viagem</h2>
+        <p>Guarde suas melhores memórias visuais aqui</p>
+      </div>
+      <div class="widget-body">
+        <div class="upload-form">
+          <label for="input-foto" class="btn-primary">
+            <i class="fa-solid fa-plus"></i> Adicionar Foto
+          </label>
+          <input type="file" id="input-foto" accept="image/png, image/jpeg" class="hidden">
+          <button id="btn-limpar-galeria" class="btn-danger">
+            <i class="fa-solid fa-trash"></i> Limpar Galeria
+          </button>
+        </div>
+        <div id="galeria-container">
+          <!-- As fotos serão inseridas aqui pelo JavaScript -->
+        </div>
+      </div>
+    </article>
+
+    <!-- Widget: Mapa Interativo -->
+    <article class="widget-card">
+      <div class="widget-header">
+        <h2><i class="fa-solid fa-map-location-dot"></i>Mapa Interativo</h2>
+        <p>Pesquise seu destino e explore a região</p>
+      </div>
+      <div class="widget-body">
+        <div class="input-group">
+          <input type="text" id="searchInput" placeholder="Digite seu destino" />
+          <button id="searchButton" class="btn-primary" aria-label="Buscar Local"><i class="fa-solid fa-magnifying-glass"></i></button>
         </div>
         <div id="map"></div>
       </div>
-      <div class="widgets">
-            <div class="header-widgets">
-        <h2><i class="fas fa-book-open"></i>Que horas são?</h2>
-        <p>Relógio para você verificar a hora</p>
-    </div>        
+    </article>
+
+    <!-- Widget: Previsão do Tempo -->
+    <article class="widget-card">
+      <div class="widget-header">
+        <h2><i class="fa-solid fa-cloud-sun"></i> Previsão do Tempo</h2>
+        <p>Consulte o clima do seu próximo destino</p>
       </div>
-      <!-- LISTA DE DESTINOS -->
-      <div class="widgets">
-        <div class="container">
-    <div class="header-widgets">
-        <h2><i class="fas fa-book-open"></i>Lista de Destinos</h2>
-        <p>Monte a sua lista do lugares que você deseja visitar!</p>
-    </div>
-
-          <input
-            type="text"
-            id="novaTarefa"
-            placeholder="Digite um novo destino"
-          /><br /><br />
-          <button id="adicionarTarefa">Adicionar Novo Destino!</button>
-
-          <ul id="listaTarefas"></ul>
-
-          <button id="limparLista">Limpar Lista</button>
+      <div class="widget-body">
+        <div class="input-group">
+          <input type="text" id="weather-input" placeholder="Digite uma cidade..." />
+          <button id="weather-btn" class="btn-primary" aria-label="Buscar Clima"><i class="fa-solid fa-magnifying-glass"></i></button>
         </div>
-      </div>
-
-      <!--CONVERSOR DE MOEDAS-->
-      <!-- Adicionei a classe .widgets aqui para herdar o estilo base -->
-      <div class="conversor-container widgets">
-        <div class="header-widgets">
-          <h2>Conversor de Moedas</h2>
-          <p>Converta valores em tempo real</p>
-        </div>
-        <div class="conversor-body">
-            <!-- Conteúdo do conversor -->
+        <div id="weather-result" class="weather-result-container">
+          <div id="weather-initial-message">
+            <p>Digite o nome de uma cidade para ver a previsão do tempo.</p>
+          </div>
+          <div id="weather-data" class="hidden">
+            <h3 id="city-name"></h3>
+            <div class="temp-container">
+              <img id="weather-icon" src="" alt="Ícone do tempo">
+              <span id="temperature"></span>
+            </div>
+            <p id="weather-description"></p>
+            <div class="details-container">
+              <p>Sensação: <span id="feels-like"></span></p>
+              <p>Umidade: <span id="humidity"></span></p>
+              <p>Vento: <span id="wind-speed"></span></p>
+            </div>
+          </div>
+          <div id="weather-error" class="hidden">
+            <p>Não foi possível encontrar a cidade. Tente novamente.</p>
+          </div>
         </div>
       </div>
-    </main>
+    </article>
 
-  </div> <!-- Fim do .content-wrapper -->
-
-   <!-- DIÁRIO DE VIAGEM -->
-
-   <div class="diario-container">
-    <div class="header-widgets">
-        <h2><i class="fas fa-book-open"></i> Meu Diário de Viagem</h2>
-        <p>Registre suas aventuras e memórias especiais</p>
-    </div>
-    <div class="diario-body">
-        <form id="form-entrada">
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="local"><i class="fas fa-map-marker-alt"></i> Local</label>
-                    <input type="text" id="local" placeholder="Onde você está?" required>
-                </div>
-                <div class="form-group">
-                    <label for="data"><i class="far fa-calendar-alt"></i> Data</label>
-                    <input type="date" id="data" required>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="titulo"><i class="fas fa-heading"></i> Título</label>
-                <input type="text" id="titulo" placeholder="Dê um título para esta entrada" required>
-            </div>
-            <div class="form-group">
-                <label for="texto"><i class="fas fa-pen"></i> Registro</label>
-                <textarea id="texto" placeholder="Descreva sua experiência hoje..." required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="humor"><i class="far fa-smile"></i> Humor</label>
-                <select id="humor">
-                    <option value="feliz">😊 Feliz</option>
-                    <option value="animado">😃 Animado</option>
-                    <option value="neutro">😐 Neutro</option>
-                    <option value="cansado">😴 Cansado</option>
-                    <option value="estressado">😤 Estressado</option>
-                </select>
-            </div>
-            <div style="display: flex; justify-content: flex-end; gap: 10px;">
-                <button type="reset" class="btn"><i class="fas fa-eraser"></i> Limpar</button>
-                <button type="submit" class="btn btn-salvar"><i class="fas fa-save"></i> Salvar Entrada</button>
-            </div>
-        </form>
-
-        <div class="entradas-container">
-            <div class="entradas-header">
-                <h3><i class="fas fa-history"></i> Entradas Anteriores</h3>
-                <div class="form-group" style="width: 150px;">
-                    <select id="filtro">
-                        <option value="todos">Todos</option>
-                        <option value="hoje">Hoje</option>
-                        <option value="semana">Esta semana</option>
-                        <option value="mes">Este mês</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div id="lista-entradas">
-                <div class="nenhuma-entrada">
-                    <i class="fas fa-book" style="font-size: 2rem; margin-bottom: 10px; opacity: 0.3;"></i>
-                    <p>Nenhuma entrada ainda. Comece a escrever suas aventuras!</p>
-                </div>
-            </div>
+    <!-- Widget: Conversor de Moedas -->
+    <article class="widget-card">
+      <div class="widget-header">
+        <h2><i class="fa-solid fa-coins"></i>Conversor de Moedas</h2>
+        <p>Converta valores em tempo real</p>
+      </div>
+      <div class="widget-body">
+        <input type="number" id="valor" placeholder="100.00" step="0.01" />
+        <div class="moedas-wrapper">
+          <select id="moeda-origem"></select>
+          <button id="swap-btn" aria-label="Inverter moedas">⇄</button>
+          <select id="moeda-destino"></select>
         </div>
-    </div>
-</div>
+        <button id="btn-converter" class="btn-primary">Converter</button>
+        <div class="resultado-container">
+          <div id="resultado"></div>
+          <p id="taxa-info"></p>
+          <p class="data-atualizacao">Taxas simuladas</p>
+        </div>
+      </div>
+    </article>
+    
+    <!-- Widget: Contador Regressivo -->
+    <article class="widget-card">
+        <div class="widget-header">
+            <h2><i class="fa-solid fa-hourglass-half"></i> Contagem Regressiva</h2>
+            <p>Adicione um destino e a data para começar!</p>
+        </div>
+        <div class="widget-body">
+            <div class="countdown-creator">
+                <input type="text" id="destination-input" placeholder="Destino da Viagem">
+                <input type="datetime-local" id="date-input">
+                <button id="add-trip-btn" class="btn-primary">Adicionar</button>
+            </div>
+            <div id="countdown-container"></div>
+        </div>
+    </article>
 
-  <script src="js/scriptMap.js"></script>
-  <script src="js/scriptListaDest.js"></script>
-  <script src="js/scriptCheck.js"></script>
-  <script src="js/scriptConversor.js"></script>
-  <script src="js/scriptHorario.js"></script>
+    <!-- Widget: Gerador de dicas aleatórias -->
+    <article class="widget-card">
+        <div class="widget-header">
+            <h2><i class="fa-solid fa-lightbulb"></i>Dicas de Viagem</h2>
+            <p>Não sabe o que fazer? Peça uma sugestão!</p>
+        </div>
+        <div class="widget-body">
+            <div id="dica-container">
+                <p id="dica-placeholder">Clique no botão para receber uma dica!</p>
+                <div id="dica-resultado" class="hidden">
+                    <i id="dica-icone" class="fas fa-question"></i>
+                    <p id="dica-texto"></p>
+                    <span id="dica-tipo"></span>
+                </div>
+            </div>
+            <button id="btn-nova-dica" class="btn-primary">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Me Dê uma Dica!
+            </button>
+        </div>
+    </article>
+
+  </main>
+
+  <!-- Lightbox para a Galeria de Fotos -->
+  <div id="lightbox" class="hidden">
+    <button class="lightbox-btn-fechar" aria-label="Fechar imagem">×</button>
+    <button class="lightbox-btn-nav lightbox-btn-anterior" aria-label="Imagem anterior">❮</button>
+    <div class="lightbox-conteudo">
+      <img src="" alt="Foto de viagem ampliada" id="lightbox-img">
+    </div>
+    <button class="lightbox-btn-nav lightbox-btn-proximo" aria-label="Próxima imagem">❯</button>
+  </div>
+
+  <footer>
+    <p class="footer-title">Projeto Programação Front-End</p>
+    <div class="footer-credits">
+      <p>Desenvolvido por:</p>
+      <span>Matheus, Patta e Laura</span>
+    </div>
+    <div class="footer-contacts">
+      <a href="mailto:matheus.s.pereira11@aluno.senai.br">matheus.s.pereira11@aluno.senai.br</a>
+      <a href="mailto:maria.patta@aluno.senai.br">maria.patta@aluno.senai.br</a>
+      <a href="mailto:laura.mora@aluno.senai.br">laura.mora@aluno.senai.br</a>
+    </div>
+  </footer>
+
 </body>
+
 </html>
